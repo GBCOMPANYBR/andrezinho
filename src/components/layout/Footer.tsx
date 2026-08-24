@@ -41,9 +41,18 @@ export function Footer() {
       </Container>
 
       <Container className="border-t border-line/70 py-4 text-xs text-ink-soft">
-        © {new Date().getFullYear()} Andrezinho. Marketplace de intermediação
-        local — a plataforma media eventuais disputas, mas o vendedor é o
-        único responsável pela veracidade e procedência do produto anunciado.
+        <p>
+          © {new Date().getFullYear()} Andrezinho. Marketplace de
+          intermediação local — a plataforma media eventuais disputas, mas o
+          vendedor é o único responsável pela veracidade e procedência do
+          produto anunciado.
+        </p>
+        <p className="mt-1.5">
+          CNPJ 63.664.608/0001-30 ·{" "}
+          <a href="mailto:contato@oandrezinho.com.br" className="hover:text-ink">
+            contato@oandrezinho.com.br
+          </a>
+        </p>
       </Container>
     </footer>
   );
