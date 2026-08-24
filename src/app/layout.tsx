@@ -21,6 +21,14 @@ export const metadata: Metadata = {
   title: "Andrezinho — preço de oportunidade, negócio de verdade",
   description:
     "Encontre produtos com preços bem abaixo do mercado. O Andrezinho é a ponte que transforma a oportunidade em negócio pago e entregue com segurança.",
+  openGraph: {
+    type: "website",
+    locale: "pt_BR",
+    siteName: "Andrezinho",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
