@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# prisma
+/prisma/*.db
+/prisma/*.db-journal
+/src/generated/
+
+# fotos originais soltas na raiz (assets já processados vivem em public/images)
+/Captura de Tela*.png

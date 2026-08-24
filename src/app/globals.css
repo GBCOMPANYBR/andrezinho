@@ -1,26 +1,53 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fbf8f3;
+  --foreground: #1b2621;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-fraunces);
+
+  /* Verde "conferido" — cor primária da marca */
+  --color-brand-50: #eaf6f1;
+  --color-brand-100: #d2ebe1;
+  --color-brand-200: #a6d7c4;
+  --color-brand-300: #78c0a6;
+  --color-brand-400: #4ea886;
+  --color-brand-500: #2c8d6c;
+  --color-brand-600: #16795a;
+  --color-brand-700: #106147;
+  --color-brand-800: #0c4b37;
+  --color-brand-900: #083a2a;
+
+  /* Laranja terracota — cor de ação / preço */
+  --color-accent-50: #fef6ed;
+  --color-accent-100: #fce7d2;
+  --color-accent-200: #f8caa0;
+  --color-accent-300: #f3ac6e;
+  --color-accent-400: #ee9c4c;
+  --color-accent-500: #e6832b;
+  --color-accent-600: #c96a1a;
+  --color-accent-700: #a45514;
+
+  --color-cream: #fbf8f3;
+  --color-cream-dark: #f3eee4;
+  --color-ink: #1b2621;
+  --color-ink-soft: #5b6b64;
+  --color-line: #e4dfd3;
+
+  --color-status-pending: #e6832b;
+  --color-status-info: #3b82f6;
+  --color-status-review: #a45514;
+  --color-status-success: #16795a;
+  --color-status-danger: #c0392b;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-cream);
+  color: var(--color-ink);
 }

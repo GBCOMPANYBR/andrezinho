@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(cuid())
+  nome          String
+  email         String   @unique
+  senhaHash     String
+  cpf           String
+  telefone      String
+  cidade        String
+  endereco      String
+  fotoDocumento String
+  isAdmin       Boolean  @default(false)
+  criadoEm      DateTime @default(now())
+
+  produtos Produto[]
+  pedidos  Pedido[]
+  sessions Session[]
+}
+
+model Session {
+  id       String   @id @default(cuid())
+  userId   String
+  criadoEm DateTime @default(now())
+  expiraEm DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Produto {
+  id         String   @id @default(cuid())
+  titulo     String
+  descricao  String
+  categoria  String
+  preco      Float
+  fotos      String
+  vendedorId String
+  criadoEm   DateTime @default(now())
+
+  vendedor User     @relation(fields: [vendedorId], references: [id], onDelete: Cascade)
+  pedidos  Pedido[]
+}
+
+model Pedido {
+  id           String   @id @default(cuid())
+  produtoId    String
+  compradorId  String
+  precoProduto Float
+  taxa         Float
+  total        Float
+  status       String   @default("aguardando_pagamento")
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  produto   Produto @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+  comprador User    @relation(fields: [compradorId], references: [id], onDelete: Cascade)
+}
