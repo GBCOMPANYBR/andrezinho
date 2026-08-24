@@ -45,13 +45,6 @@ export default function EntrarPage() {
           Criar conta
         </Link>
       </p>
-
-      <div className="mt-8 rounded-xl border border-dashed border-line p-4 text-xs text-ink-soft">
-        <p className="font-medium text-ink">Login de teste</p>
-        <p className="mt-1">admin: andrezinho@andrezinho.com</p>
-        <p>vendedor: marcos@exemplo.com</p>
-        <p>senha para os dois: andrezinho123</p>
-      </div>
     </Container>
   );
 }
