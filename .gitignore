@@ -45,5 +45,8 @@ next-env.d.ts
 /prisma/*.db-journal
 /src/generated/
 
-# fotos originais soltas na raiz (assets já processados vivem em public/images)
-/Captura de Tela*.png
+# fotos e exports soltos na raiz (assets do app vivem em public/; a raiz é
+# onde downloads de artifacts/marketing acabam caindo)
+/*.png
+/*.jpg
+/*.jpeg
