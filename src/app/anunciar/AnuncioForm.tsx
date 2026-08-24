@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
+import { upload } from "@vercel/blob/client";
 import { Label, INPUT_CLASS, ErrorBanner } from "@/components/ui/Field";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 import { categorias } from "@/lib/categorias";
@@ -10,23 +11,60 @@ const ESTADO_INICIAL: EstadoAnunciar = {};
 
 export function AnuncioForm() {
   const [estado, formAction] = useActionState(anunciar, ESTADO_INICIAL);
+  const [fotosUrls, setFotosUrls] = useState<string[]>([]);
+  const [enviandoFotos, setEnviandoFotos] = useState(false);
+  const [erroFotos, setErroFotos] = useState<string | null>(null);
+
+  async function handleFotosChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const arquivos = Array.from(e.target.files ?? []);
+    if (arquivos.length === 0) return;
+
+    setEnviandoFotos(true);
+    setErroFotos(null);
+    setFotosUrls([]);
+    try {
+      const enviados = await Promise.all(
+        arquivos.map((arquivo) =>
+          upload(arquivo.name, arquivo, {
+            access: "public",
+            handleUploadUrl: "/api/upload",
+          })
+        )
+      );
+      setFotosUrls(enviados.map((b) => b.url));
+    } catch {
+      setErroFotos("Não foi possível enviar as fotos. Tente novamente.");
+    } finally {
+      setEnviandoFotos(false);
+    }
+  }
 
   return (
     <form action={formAction} className="mt-8 space-y-5">
       {estado.erro && <ErrorBanner>{estado.erro}</ErrorBanner>}
+      {erroFotos && <ErrorBanner>{erroFotos}</ErrorBanner>}
 
       <div>
         <Label htmlFor="fotos">Fotos do produto</Label>
         <input
           id="fotos"
-          name="fotos"
           type="file"
           accept="image/*"
           multiple
-          required
+          required={fotosUrls.length === 0}
+          onChange={handleFotosChange}
           className="block w-full text-sm text-ink-soft file:mr-3 file:rounded-full file:border-0 file:bg-brand-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-brand-700 hover:file:bg-brand-100"
         />
-        <p className="mt-1.5 text-xs text-ink-soft">Envie quantas fotos quiser — a primeira vira a capa do anúncio.</p>
+        {fotosUrls.map((url) => (
+          <input key={url} type="hidden" name="fotosUrls" value={url} />
+        ))}
+        <p className="mt-1.5 text-xs text-ink-soft">
+          {enviandoFotos
+            ? "Enviando fotos..."
+            : fotosUrls.length > 0
+              ? `${fotosUrls.length} foto(s) enviada(s) — a primeira vira a capa do anúncio.`
+              : "Envie quantas fotos quiser — a primeira vira a capa do anúncio."}
+        </p>
       </div>
 
       <div>
@@ -78,7 +116,7 @@ export function AnuncioForm() {
         </p>
       </div>
 
-      <SubmitButton pendingText="Publicando..." className="w-full">
+      <SubmitButton pendingText="Publicando..." className="w-full" disabled={enviandoFotos || fotosUrls.length === 0}>
         Publicar anúncio
       </SubmitButton>
     </form>

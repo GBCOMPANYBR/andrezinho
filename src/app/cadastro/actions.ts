@@ -3,7 +3,6 @@
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { criarSessao, hashSenha } from "@/lib/auth";
-import { arquivoParaDataUri } from "@/lib/uploads";
 
 export interface EstadoCadastro {
   erro?: string;
@@ -26,7 +25,7 @@ export async function cadastrar(
   const telefone = somenteDigitos(String(formData.get("telefone") ?? ""));
   const cidade = String(formData.get("cidade") ?? "").trim();
   const endereco = String(formData.get("endereco") ?? "").trim();
-  const documento = formData.get("documento");
+  const fotoDocumento = String(formData.get("fotoDocumentoUrl") ?? "");
   const aceiteTermos = formData.get("aceiteTermos");
 
   if (!nome || nome.length < 3) {
@@ -50,11 +49,8 @@ export async function cadastrar(
   if (!endereco || endereco.length < 5) {
     return { erro: "Informe seu endereço completo." };
   }
-  if (!(documento instanceof File) || documento.size === 0) {
+  if (!fotoDocumento) {
     return { erro: "Envie uma foto do seu documento." };
-  }
-  if (!documento.type.startsWith("image/")) {
-    return { erro: "O documento precisa ser uma imagem (JPG ou PNG)." };
   }
   if (!aceiteTermos) {
     return { erro: "É preciso aceitar os Termos de Uso para continuar." };
@@ -65,7 +61,6 @@ export async function cadastrar(
     return { erro: "Já existe uma conta com esse e-mail." };
   }
 
-  const fotoDocumento = await arquivoParaDataUri(documento);
   const senhaHash = await hashSenha(senha);
 
   const usuario = await db.user.create({

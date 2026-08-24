@@ -1,7 +1,8 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import Link from "next/link";
+import { upload } from "@vercel/blob/client";
 import { ShieldCheck } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { Label, INPUT_CLASS, ErrorBanner } from "@/components/ui/Field";
@@ -12,6 +13,29 @@ const ESTADO_INICIAL: EstadoCadastro = {};
 
 export default function CadastroPage() {
   const [estado, formAction] = useActionState(cadastrar, ESTADO_INICIAL);
+  const [fotoDocumentoUrl, setFotoDocumentoUrl] = useState<string | null>(null);
+  const [enviandoDocumento, setEnviandoDocumento] = useState(false);
+  const [erroDocumento, setErroDocumento] = useState<string | null>(null);
+
+  async function handleDocumentoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const arquivo = e.target.files?.[0];
+    if (!arquivo) return;
+
+    setEnviandoDocumento(true);
+    setErroDocumento(null);
+    setFotoDocumentoUrl(null);
+    try {
+      const blob = await upload(arquivo.name, arquivo, {
+        access: "public",
+        handleUploadUrl: "/api/upload",
+      });
+      setFotoDocumentoUrl(blob.url);
+    } catch {
+      setErroDocumento("Não foi possível enviar o documento. Tente novamente.");
+    } finally {
+      setEnviandoDocumento(false);
+    }
+  }
 
   return (
     <Container className="max-w-lg py-10">
@@ -26,6 +50,7 @@ export default function CadastroPage() {
 
       <form action={formAction} className="mt-8 space-y-5">
         {estado.erro && <ErrorBanner>{estado.erro}</ErrorBanner>}
+        {erroDocumento && <ErrorBanner>{erroDocumento}</ErrorBanner>}
 
         <div>
           <Label htmlFor="nome">Nome completo</Label>
@@ -67,15 +92,22 @@ export default function CadastroPage() {
           <Label htmlFor="documento">Foto do documento (RG ou CNH)</Label>
           <input
             id="documento"
-            name="documento"
             type="file"
             accept="image/*"
-            required
+            required={!fotoDocumentoUrl}
+            onChange={handleDocumentoChange}
             className="block w-full text-sm text-ink-soft file:mr-3 file:rounded-full file:border-0 file:bg-brand-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-brand-700 hover:file:bg-brand-100"
           />
+          {fotoDocumentoUrl && (
+            <input type="hidden" name="fotoDocumentoUrl" value={fotoDocumentoUrl} />
+          )}
           <p className="mt-1.5 flex items-center gap-1.5 text-xs text-ink-soft">
             <ShieldCheck className="h-3.5 w-3.5 text-brand-600" strokeWidth={1.75} />
-            Usado só para verificação de identidade, não fica público.
+            {enviandoDocumento
+              ? "Enviando documento..."
+              : fotoDocumentoUrl
+                ? "Documento enviado. Usado só para verificação de identidade, não aparece em nenhuma página pública."
+                : "Usado só para verificação de identidade, não aparece em nenhuma página pública."}
           </p>
         </div>
 
@@ -94,7 +126,11 @@ export default function CadastroPage() {
           </label>
         </div>
 
-        <SubmitButton pendingText="Criando conta..." className="w-full">
+        <SubmitButton
+          pendingText="Criando conta..."
+          className="w-full"
+          disabled={enviandoDocumento || !fotoDocumentoUrl}
+        >
           Criar conta
         </SubmitButton>
       </form>
