@@ -1,12 +1,14 @@
-import { STATUS_COR, STATUS_LABEL, type StatusPedido } from "@/lib/status";
+import { STATUS_COR, STATUS_LABEL, OFERTA_COR, OFERTA_LABEL } from "@/lib/status";
+
+const LABEL: Record<string, string> = { ...STATUS_LABEL, ...OFERTA_LABEL };
+const COR: Record<string, string> = { ...STATUS_COR, ...OFERTA_COR };
 
 export function StatusBadge({ status }: { status: string }) {
-  const s = status as StatusPedido;
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_COR[s] ?? "bg-cream-dark text-ink-soft"}`}
+      className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${COR[status] ?? "bg-cream-dark text-ink-soft"}`}
     >
-      {STATUS_LABEL[s] ?? status}
+      {LABEL[status] ?? status}
     </span>
   );
 }

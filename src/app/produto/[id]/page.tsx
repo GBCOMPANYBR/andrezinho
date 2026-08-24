@@ -12,10 +12,9 @@ import {
   parseFotos,
   produtoDisponivel,
 } from "@/lib/produtos";
+import { ofertaPendenteDoUsuario } from "@/lib/ofertas";
 import { getUsuarioAtual } from "@/lib/auth";
 import { LinkButton } from "@/components/ui/Button";
-import { SubmitButton } from "@/components/ui/SubmitButton";
-import { comprar } from "./actions";
 
 export default async function ProdutoPage({
   params,
@@ -34,9 +33,11 @@ export default async function ProdutoPage({
   const disponivel = produtoDisponivel(produto.pedidos);
   const vendasConcluidas = await contarVendasConcluidas(produto.vendedorId);
   const ehVendedor = usuarioAtual?.id === produto.vendedorId;
+  const ofertaPendente =
+    usuarioAtual && !ehVendedor && disponivel
+      ? await ofertaPendenteDoUsuario(produto.id, usuarioAtual.id)
+      : null;
   const gradiente = "from-brand-200 via-brand-100 to-cream-dark";
-
-  const comprarComId = comprar.bind(null, produto.id);
 
   return (
     <Container className="py-10">
@@ -90,7 +91,7 @@ export default async function ProdutoPage({
 
           <div className="mt-6 flex items-center justify-between rounded-2xl border border-line bg-white p-4">
             <div>
-              <p className="text-sm font-medium text-ink">{produto.vendedor.nome}</p>
+              <p className="text-sm font-medium text-ink">Vendedor de {produto.vendedor.cidade}</p>
               {vendasConcluidas > 0 ? (
                 <div className="mt-1 flex items-center gap-1.5 text-sm text-ink-soft">
                   <PackageCheck className="h-4 w-4 text-brand-600" strokeWidth={1.75} />
@@ -117,15 +118,17 @@ export default async function ProdutoPage({
             <p className="mt-6 rounded-xl bg-cream-dark px-4 py-3 text-center text-sm text-ink-soft">
               Este produto já foi vendido.
             </p>
+          ) : ofertaPendente ? (
+            <p className="mt-6 rounded-xl bg-cream-dark px-4 py-3 text-center text-sm text-ink-soft">
+              Você já enviou uma oferta pra esse produto — aguardando resposta do vendedor.
+            </p>
           ) : usuarioAtual ? (
-            <form action={comprarComId}>
-              <SubmitButton pendingText="Processando..." variant="cta" className="mt-6 w-full">
-                Comprar agora
-              </SubmitButton>
-            </form>
+            <LinkButton href={`/produto/${produto.id}/oferta`} variant="cta" size="lg" className="mt-6 w-full">
+              Tenho interesse
+            </LinkButton>
           ) : (
             <LinkButton href="/entrar" variant="cta" size="lg" className="mt-6 w-full">
-              Entrar para comprar
+              Entrar para fazer uma oferta
             </LinkButton>
           )}
           <p className="mt-3 text-center text-xs text-ink-soft">

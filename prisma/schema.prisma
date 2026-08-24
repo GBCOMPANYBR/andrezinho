@@ -24,6 +24,7 @@ model User {
 
   produtos Produto[]
   pedidos  Pedido[]
+  ofertas  Oferta[]
   sessions Session[]
 }
 
@@ -48,6 +49,21 @@ model Produto {
 
   vendedor User     @relation(fields: [vendedorId], references: [id], onDelete: Cascade)
   pedidos  Pedido[]
+  ofertas  Oferta[]
+}
+
+model Oferta {
+  id           String   @id @default(cuid())
+  produtoId    String
+  compradorId  String
+  valor        Float
+  mensagem     String?
+  status       String   @default("pendente")
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  produto   Produto @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+  comprador User    @relation(fields: [compradorId], references: [id], onDelete: Cascade)
 }
 
 model Pedido {
@@ -57,7 +73,7 @@ model Pedido {
   precoProduto Float
   taxa         Float
   total        Float
-  status       String   @default("aguardando_pagamento")
+  status       String   @default("vendido")
   criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
 
