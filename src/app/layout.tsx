@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Fraunces } from "next/font/google";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { WhatsAppButton } from "@/components/layout/WhatsAppButton";
 import { getUsuarioAtual } from "@/lib/auth";
 import "./globals.css";
 
@@ -43,6 +44,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <Navbar usuario={usuario ? { nome: usuario.nome, isAdmin: usuario.isAdmin } : null} />
         <main className="flex-1">{children}</main>
         <Footer />
+        <WhatsAppButton />
       </body>
     </html>
   );
