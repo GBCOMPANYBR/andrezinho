@@ -41,6 +41,28 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${inter.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-cream font-sans text-ink">
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "Andrezinho",
+              url: "https://oandrezinho.com.br",
+              description:
+                "Marketplace local de oportunidades reais — preços bem abaixo do mercado, com conferência física e verificação de identidade.",
+              taxID: "63.664.608/0001-30",
+              contactPoint: {
+                "@type": "ContactPoint",
+                contactType: "customer service",
+                email: "contato@oandrezinho.com.br",
+                telephone: "+5511989635013",
+                availableLanguage: "Portuguese",
+              },
+            }),
+          }}
+        />
         <Navbar usuario={usuario ? { nome: usuario.nome, isAdmin: usuario.isAdmin } : null} />
         <main className="flex-1">{children}</main>
         <Footer />
