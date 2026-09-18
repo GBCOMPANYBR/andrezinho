@@ -52,6 +52,10 @@ export function Footer() {
           <a href="mailto:contato@oandrezinho.com.br" className="hover:text-ink">
             contato@oandrezinho.com.br
           </a>
+          {" · "}
+          <a href="https://gbcompanybr.com.br" target="_blank" rel="noopener noreferrer" className="hover:text-ink">
+            BY GBCOMPANYBR
+          </a>
         </p>
       </Container>
     </footer>
